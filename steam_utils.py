@@ -72,6 +72,34 @@ def get_items(steam_id, app_id):
 
         for item in descriptions:
             asset = assets.get(item['classid'])
-            items.append({'name': item.get("market_hash_name"), 'amount': asset.get("amount")})
+            new_item = ({'name': item.get("market_hash_name"), 'amount': asset.get("amount"), 'marketable': item.get("marketable")})
+
+            if new_item['marketable'] == 1:
+                # price = float(get_item_price(app_id, new_item['name']).replace(',', '.').replace('€', ''))
+
+                ### DELETE THIS BLOCK LATER AND UNCOMMENT THE LINE ABOVE
+                price = get_item_price(app_id, new_item['name'])
+                if price is not None:
+                    price = float(price.replace(',', '.').replace('€', ''))
+                else:
+                    price = 0
+                ###
+
+                new_item['value'] = price * int(new_item['amount'])
+
+            items.append(new_item)
 
     return items
+
+def get_item_price(app_id, market_hash_name):
+    response = requests.get(f'https://steamcommunity.com/market/priceoverview/?appid={app_id}&market_hash_name={market_hash_name}&currency={3}')
+
+    if response.status_code == 200:
+        result = response.json()
+
+        if result['success'] == 1:
+            return result['lowest_price']
+        else:
+            print(f'Failed to get item price: {result["message"]}')
+    else:
+        print(f'Failed to get item price: {response.status_code}')

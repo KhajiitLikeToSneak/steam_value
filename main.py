@@ -35,13 +35,19 @@ def print_items(steam_id, games, separator):
 
         if items:
             amount = 0
+            value = 0
 
             for item in items:
                 amount += item["amount"]
 
-                print(f'Item: {item["name"]}, Amount: {item["amount"]}')
+                if item["marketable"] == 0:
+                    print(f'Item: {item["name"]}, Amount: {item["amount"]}, Marketable: {item["marketable"]}')
+                else:
+                    value += item["value"]
 
-            print(f'Total items: {amount}')
+                    print(f'Item: {item["name"]}, Amount: {item["amount"]}, Marketable: {item["marketable"]}, Value: {item["value"]} €')
+
+            print(f'Total items: {amount}, Total value: {round(value, 2)} €')
 
             print(separator + '\n')
         else:
