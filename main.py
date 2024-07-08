@@ -1,3 +1,4 @@
+from utils import *
 from steam_utils import *
 import tkinter as tk
 
@@ -8,14 +9,26 @@ separator = '-' * 30
 def on_submit():
     profile_url = entry.get()
 
-    steam_id = profile_url.split('/')[-1]
+    steam_id = extract_id(profile_url)
     # print(steam_id)
     steam_id_64 = get_steamid64(api_key, steam_id)
+
+    if steam_id_64 is None:
+        print('Profile not found.')
+        return
+
+    if check_privacy(api_key, steam_id_64) is False:
+        print('Profile is private.')
+        return
 
     print(separator + f'\nSteamID64: {steam_id_64}\n' + separator + '\n')
 
     html_content = get_inventory_html(steam_id)
     inventory_games = parse_inventory_html(html_content)
+
+    if inventory_games is None:
+        print('Inventory is private.')
+        return
 
     print(separator + f'\nInventory games\n' + separator)
 

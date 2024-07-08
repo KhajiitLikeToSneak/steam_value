@@ -12,11 +12,21 @@ def get_steamid64(api_key, steam_id):
         if result['response']['success'] == 1:
             return result['response']['steamid']
         else:
-            print(f'Failed to get SteamID64: {result["response"]["message"]}')
-
+            return None
     else:
         print(f'Failed to resolve vanity url {response.status_code}')
 
+def check_privacy(api_key, steam_id):
+    response = requests.get(f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={steam_id}')
+
+    if response.status_code == 200:
+        result = response.json()
+        privacy = result['response']['players'][0]['communityvisibilitystate']
+
+        if privacy != 3:
+            return False
+    else:
+        print(f'Failed to get player summaries: {response.status_code}')
 
 def fetch_inventory(steam_id, app_id):
     response = requests.get(f'https://steamcommunity.com/inventory/{steam_id}/{app_id}/2?l=english&count=5000')
@@ -50,6 +60,8 @@ def parse_inventory_html(html_content):
 
             if appid and name:
                 games_with_inventory.append({'appid': appid, 'name': name})
+    else:
+        return None
 
     return games_with_inventory
 
@@ -90,6 +102,7 @@ def get_items(steam_id, app_id):
             items.append(new_item)
 
     return items
+
 
 def get_item_price(app_id, market_hash_name):
     response = requests.get(f'https://steamcommunity.com/market/priceoverview/?appid={app_id}&market_hash_name={market_hash_name}&currency={3}')
