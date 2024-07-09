@@ -1,7 +1,7 @@
 from steam_utils import *
 import tkinter as tk
+import config
 
-api_key = 'B27C5FCB7D3D0F6E7B9DC78A7AE05EFB'
 separator = '-' * 30
 
 
@@ -10,7 +10,7 @@ def on_submit():
 
     steam_id = profile_url.split('/')[-1]
     # print(steam_id)
-    steam_id_64 = get_steamid64(api_key, steam_id)
+    steam_id_64 = get_steamid64(config.api_key, steam_id)
 
     print(separator + f'\nSteamID64: {steam_id_64}\n' + separator + '\n')
 
