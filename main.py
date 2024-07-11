@@ -1,8 +1,8 @@
 from utils import *
 from steam_utils import *
 import tkinter as tk
+import config
 
-api_key = 'B27C5FCB7D3D0F6E7B9DC78A7AE05EFB'
 separator = '-' * 30
 
 
