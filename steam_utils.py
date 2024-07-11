@@ -16,6 +16,27 @@ def get_steamid64(api_key, steam_id):
     else:
         print(f'Failed to resolve vanity url {response.status_code}')
 
+
+def check_profile(steam_id):
+    custom_id = None
+
+    response_id = requests.get(f'https://steamcommunity.com/id/{steam_id}')
+    response_profiles = requests.get(f'https://steamcommunity.com/profiles/{steam_id}')
+
+    not_found = 'The specified profile could not be found.'
+    failed_loading = 'Failed loading profile data, please try again later.'
+    if not_found in response_id.text and (not_found in response_profiles.text or failed_loading in response_profiles.text):
+        profile_exists = False
+    elif not_found not in response_id.text and (not_found in response_profiles.text or failed_loading in response_profiles.text):
+        profile_exists = True
+        custom_id = True
+    else:
+        profile_exists = True
+        custom_id = False
+
+    return profile_exists, custom_id
+
+
 def check_privacy(api_key, steam_id):
     response = requests.get(f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={api_key}&steamids={steam_id}')
 
@@ -37,8 +58,11 @@ def fetch_inventory(steam_id, app_id):
         print(f'Failed to fetch inventory: {response.status_code}')
 
 
-def get_inventory_html(steam_id):
-    response = requests.get(f'https://steamcommunity.com/id/{steam_id}/inventory/')
+def get_inventory_html(steam_id, custom_id):
+    if custom_id:
+        response = requests.get(f'https://steamcommunity.com/id/{steam_id}/inventory/')
+    else:
+        response = requests.get(f'https://steamcommunity.com/profiles/{steam_id}/inventory/')
 
     if response.status_code == 200:
         return response.text
