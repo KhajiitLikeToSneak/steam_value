@@ -1,3 +1,4 @@
+from utils import *
 from steam_utils import *
 import tkinter as tk
 import config
@@ -7,15 +8,34 @@ separator = '-' * 30
 
 def on_submit():
     profile_url = entry.get()
-
-    steam_id = profile_url.split('/')[-1]
+    steam_id = extract_id(profile_url)
     # print(steam_id)
-    steam_id_64 = get_steamid64(config.api_key, steam_id)
 
-    print(separator + f'\nSteamID64: {steam_id_64}\n' + separator + '\n')
+    profile_exists, custom_id = check_profile(steam_id)
+    # print('Profile exists: ', profile_exists)
+    # print('Custom ID: ', custom_id)
 
-    html_content = get_inventory_html(steam_id)
+    if not profile_exists:
+        print('Profile not found.')
+        return
+
+    if custom_id:
+        steam_id_64 = get_steamid64(config.api_key, steam_id)
+    else:
+        steam_id_64 = steam_id
+
+    if check_privacy(config.api_key, steam_id_64) is False:
+        print('Profile is private.')
+        return
+
+    # print(separator + f'\nSteamID64: {steam_id_64}\n' + separator + '\n')
+
+    html_content = get_inventory_html(steam_id, custom_id)
     inventory_games = parse_inventory_html(html_content)
+
+    if inventory_games is None:
+        print('Inventory is private.')
+        return
 
     print(separator + f'\nInventory games\n' + separator)
 
@@ -25,33 +45,6 @@ def on_submit():
     print(f'-' * 30 + f' \n')
 
     print_items(steam_id_64, inventory_games, separator)
-
-
-def print_items(steam_id, games, separator):
-    for game in games:
-        print(separator + f'\nGame: {game["name"]}\n' + separator)
-
-        items = get_items(steam_id, game['appid'])
-
-        if items:
-            amount = 0
-            value = 0
-
-            for item in items:
-                amount += item["amount"]
-
-                if item["marketable"] == 0:
-                    print(f'Item: {item["name"]}, Amount: {item["amount"]}, Marketable: {item["marketable"]}')
-                else:
-                    value += item["value"]
-
-                    print(f'Item: {item["name"]}, Amount: {item["amount"]}, Marketable: {item["marketable"]}, Value: {item["value"]} €')
-
-            print(f'Total items: {amount}, Total value: {round(value, 2)} €')
-
-            print(separator + '\n')
-        else:
-            print('No items found.\n' + separator + '\n')
 
 
 root = tk.Tk()
