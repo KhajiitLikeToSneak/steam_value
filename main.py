@@ -20,11 +20,11 @@ def on_submit():
         return
 
     if custom_id:
-        steam_id_64 = get_steamid64(api_key, steam_id)
+        steam_id_64 = get_steamid64(config.api_key, steam_id)
     else:
         steam_id_64 = steam_id
 
-    if check_privacy(api_key, steam_id_64) is False:
+    if check_privacy(config.api_key, steam_id_64) is False:
         print('Profile is private.')
         return
 
