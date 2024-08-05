@@ -14,7 +14,7 @@ def print_items(steam_id, games, separator):
     for game in games:
         print(separator + f'\nGame: {game["name"]}\n' + separator)
 
-        items = get_items(steam_id, game['appid'])
+        items = get_items(steam_id, game['appid'], game['contextid'])
 
         if items:
             amount = 0

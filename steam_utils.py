@@ -1,10 +1,11 @@
+import json
+import re
 import requests
 from bs4 import BeautifulSoup
 
 
 def get_steamid64(api_key, steam_id):
-    response = requests.get(
-        f'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={steam_id}')
+    response = requests.get(f'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={api_key}&vanityurl={steam_id}')
 
     if response.status_code == 200:
         result = response.json()
@@ -49,8 +50,9 @@ def check_privacy(api_key, steam_id):
     else:
         print(f'Failed to get player summaries: {response.status_code}')
 
-def fetch_inventory(steam_id, app_id):
-    response = requests.get(f'https://steamcommunity.com/inventory/{steam_id}/{app_id}/2?l=english&count=5000')
+
+def fetch_inventory(steam_id, app_id, context_id):
+    response = requests.get(f'https://steamcommunity.com/inventory/{steam_id}/{app_id}/{context_id}?l=english&count=5000')
 
     if response.status_code == 200:
         return response.json()
@@ -72,28 +74,30 @@ def get_inventory_html(steam_id, custom_id):
 
 def parse_inventory_html(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
-    games_with_inventory = []
-    container = soup.find('div', class_='tabitems_ctn')
+    scripts = soup.find_all('script', type='text/javascript')
 
-    if container:
-        game_tabs = container.find_all('a', class_='games_list_tab')
+    for script in scripts:
+        if 'var g_rgAppContextData' in script.text:
+            contextdata = re.search('var g_rgAppContextData = (.*?);', script.text).group(1)
+            data = json.loads(contextdata)
+            print(data)
 
-        for tab in game_tabs:
-            appid = tab.get('id').split('_')[-1]
-            name = tab.find('span', class_='games_list_tab_name').text.strip()
+            games = []
+            for appid, game in data.items():
+                for context in game['rgContexts'].values():
+                    games.append({
+                        'appid': appid,
+                        'name': game['name'],
+                        'contextid': context['id']
+                    })
 
-            if appid and name:
-                games_with_inventory.append({'appid': appid, 'name': name})
-    else:
-        return None
-
-    return games_with_inventory
+    return games
 
 
-def get_items(steam_id, app_id):
+def get_items(steam_id, app_id, context_id):
     items = []
 
-    inventory_data = fetch_inventory(steam_id, app_id)
+    inventory_data = fetch_inventory(steam_id, app_id, context_id)
 
     if inventory_data:
         assets = {}
