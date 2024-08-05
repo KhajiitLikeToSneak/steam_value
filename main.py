@@ -9,11 +9,8 @@ separator = '-' * 30
 def on_submit():
     profile_url = entry.get()
     steam_id = extract_id(profile_url)
-    # print(steam_id)
 
     profile_exists, custom_id = check_profile(steam_id)
-    # print('Profile exists: ', profile_exists)
-    # print('Custom ID: ', custom_id)
 
     if not profile_exists:
         print('Profile not found.')
@@ -40,7 +37,7 @@ def on_submit():
     print(separator + f'\nInventory games\n' + separator)
 
     for game in inventory_games:
-        print(f'Game: {game["name"]}, AppID: {game["appid"]}')
+        print(f'Game: {game["name"]}, AppID: {game["appid"]}, ContextID: {game["contextid"]}')
 
     print(f'-' * 30 + f' \n')
 
@@ -51,7 +48,7 @@ root = tk.Tk()
 root.minsize(500, 350)
 root.configure(background='gray')
 
-label = tk.Label(root, text="Enter your steam profile URL: ")  # https://steamcommunity.com/id/gedl333
+label = tk.Label(root, text="Enter your steam profile URL: ")
 label.pack(pady=20)
 
 entry = tk.Entry(root, width=50, borderwidth=3)
