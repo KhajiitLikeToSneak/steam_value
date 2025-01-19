@@ -25,8 +25,6 @@ def on_submit():
         print('Profile is private.')
         return
 
-    # print(separator + f'\nSteamID64: {steam_id_64}\n' + separator + '\n')
-
     html_content = get_inventory_html(steam_id, custom_id)
     inventory_games = parse_inventory_html(html_content)
 

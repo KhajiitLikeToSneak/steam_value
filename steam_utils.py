@@ -1,5 +1,7 @@
 import json
 import re
+import time
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -80,7 +82,6 @@ def parse_inventory_html(html_content):
         if 'var g_rgAppContextData' in script.text:
             contextdata = re.search('var g_rgAppContextData = (.*?);', script.text).group(1)
             data = json.loads(contextdata)
-            print(data)
 
             games = []
             for appid, game in data.items():
@@ -132,15 +133,37 @@ def get_items(steam_id, app_id, context_id):
     return items
 
 
+# def get_item_price(app_id, market_hash_name):
+#     with rate_limiter:
+#         response = requests.get(f'https://steamcommunity.com/market/priceoverview/?appid={app_id}&market_hash_name={market_hash_name}&currency={3}')
+#
+#         if response.status_code == 200:
+#             result = response.json()
+#
+#             if result['success'] == 1:
+#                 return result['lowest_price']
+#             else:
+#                 print(f'Failed to get item price: {result["message"]}')
+#         else:
+#             print(f'Failed to get item price: {response.status_code}')
+
 def get_item_price(app_id, market_hash_name):
-    response = requests.get(f'https://steamcommunity.com/market/priceoverview/?appid={app_id}&market_hash_name={market_hash_name}&currency={3}')
+    while True:
+        response = requests.get(f'https://steamcommunity.com/market/priceoverview/?appid={app_id}&market_hash_name={market_hash_name}&currency={3}')
 
-    if response.status_code == 200:
-        result = response.json()
+        print(market_hash_name)
 
-        if result['success'] == 1:
-            return result['lowest_price']
+        if response.status_code == 200:
+            result = response.json()
+
+            if result['success'] == 1:
+                return result['lowest_price']
+            else:
+                print(f'Failed to get item price: {result["message"]}')
+                return None
+        elif response.status_code == 429:
+            print('Too many requests, sleeping for 60 seconds')  # 20 requests per minute only
+            time.sleep(60)
         else:
-            print(f'Failed to get item price: {result["message"]}')
-    else:
-        print(f'Failed to get item price: {response.status_code}')
+            print(f'Failed to get item price: {response.status_code}')
+            return None

@@ -11,6 +11,8 @@ def extract_id(entry):
 
 
 def print_items(steam_id, games, separator):
+    total_value = 0
+
     for game in games:
         print(separator + f'\nGame: {game["name"]}\n' + separator)
 
@@ -30,8 +32,14 @@ def print_items(steam_id, games, separator):
 
                     print(f'Item: {item["name"]}, Amount: {item["amount"]}, Marketable: {item["marketable"]}, Value: {item["value"]} €')
 
+                total_value += value
+
             print(f'Total items: {amount}, Total value: {round(value, 2)} €')
 
             print(separator + '\n')
         else:
             print('No items found.\n' + separator + '\n')
+
+    # print(f'Total value of all items: {round(total_value, 2)} €')
+    # print(separator + '\n')
+    print(f'{separator}' + '\n' + 'Total value of all items: {round(total_value, 2)} €\n' + separator + '\n')
