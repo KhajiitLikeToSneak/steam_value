@@ -20,8 +20,8 @@ A python script that calculates the total value of a steam user's inventory by u
  5. Enter your Steam profile URL or vanity URL in the input field and click "Calculate".
 
 ## Possible URL inputs:
-- Vanity URL (for example, `rxgucci`)
-- Steam community profile URL (for example, `https://steamcommunity.com/id/rxgucci` or `https://steamcommunity.com/profiles/76561198216779888`)
+- Vanity URL (for example, `user123`)
+- Steam community profile URL (for example, `https://steamcommunity.com/id/user123` or `https://steamcommunity.com/profiles/11122233344455566`)
 
 ## How It Works
  1. The user enters a Steam profile URL or vanity URL.
