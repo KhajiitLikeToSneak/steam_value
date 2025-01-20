@@ -15,7 +15,7 @@ A python script that calculates the total value of a steam user's inventory by u
 ## Usage
  1. Obtain a Steam Web API key from https://steamcommunity.com/dev/apikey.
  2. Create config.py file in the project directory.
- 3. Set your API key in the config.py file: api_key = "YOUR_API_KEY"
+ 3. Set your API key in the config.py file: `api_key = "YOUR_API_KEY"`
  4. Run main.py
  5. Enter your Steam profile URL or vanity URL in the input field and click "Calculate".
 
@@ -33,7 +33,7 @@ A python script that calculates the total value of a steam user's inventory by u
  7. The script parses the inventory data and calculates the total value of marketable items.
 
 ## Files
-- main.py: The main script that runs the GUI and handles user input.
-- utils.py: Contains utility functions for extracting Steam IDs and printing item information.
-- steam_utils.py: Contains functions for interacting with the Steam Web API and fetching inventory data.
-- config.py: Contains the API key configuration.
+- **main.py:** The main script that runs the GUI and handles user input.
+- **utils.py:** Contains utility functions for extracting Steam IDs and printing item information.
+- **steam_utils.py:** Contains functions for interacting with the Steam Web API and fetching inventory data.
+- **config.py:** Contains the API key configuration.
