@@ -32,7 +32,7 @@ def print_items(steam_id, games, separator):
 
                     print(f'Item: {item["name"]}, Amount: {item["amount"]}, Marketable: {item["marketable"]}, Value: {item["value"]} €')
 
-                total_value += value
+            total_value += round(value, 2)
 
             print(f'Total items: {amount}, Total value: {round(value, 2)} €')
 
@@ -40,6 +40,4 @@ def print_items(steam_id, games, separator):
         else:
             print('No items found.\n' + separator + '\n')
 
-    # print(f'Total value of all items: {round(total_value, 2)} €')
-    # print(separator + '\n')
-    print(f'{separator}' + '\n' + 'Total value of all items: {round(total_value, 2)} €\n' + separator + '\n')
+    print(f'{separator}\nTotal value of whole inventory: {total_value} €\n{separator}\n')
