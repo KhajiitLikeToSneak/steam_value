@@ -83,6 +83,9 @@ def parse_inventory_html(html_content):
             contextdata = re.search('var g_rgAppContextData = (.*?);', script.text).group(1)
             data = json.loads(contextdata)
 
+            if isinstance(data, list):
+                return None
+
             games = []
             for appid, game in data.items():
                 for context in game['rgContexts'].values():
