@@ -119,7 +119,11 @@ def get_items(steam_id, app_id, context_id):
             new_item = ({'name': item.get("market_hash_name"), 'amount': asset.get("amount"), 'marketable': item.get("marketable")})
 
             if new_item['marketable'] == 1:
-                price = float(get_item_price(app_id, new_item['name']).replace(',', '.').replace('€', ''))
+                price = get_item_price(app_id, new_item['name'])
+                if price is not None:
+                    price = float(price.replace(',', '.').replace('€', ''))
+                else:
+                    price = 0
 
                 new_item['value'] = price * int(new_item['amount'])
 
